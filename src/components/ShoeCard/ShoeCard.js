@@ -31,16 +31,22 @@ const ShoeCard = ({
       ? 'new-release'
       : 'default'
 
+  const variantNames = new Map();
+  variantNames.set('new-release', 'Just Released!');
+  variantNames.set('on-sale', 'Sale')
+
   return (
     <Link href={`/shoe/${slug}`}>
       <Wrapper>
         <ImageWrapper>
+          {variant !== 'default' && <Variant className={variant}>{variantNames.get(variant)}</Variant>}
           <Image alt="" src={imageSrc} />
         </ImageWrapper>
         <Spacer size={12} />
         <Row>
           <Name>{name}</Name>
-          <Price>{formatPrice(price)}</Price>
+          <Price className={salePrice ? 'line' : ''}>{formatPrice(price)}</Price>
+          {salePrice && <SalePrice>{`$${salePrice / 100}`}</SalePrice>}
         </Row>
         <Row>
           <ColorInfo>{pluralize('Color', numOfColors)}</ColorInfo>
@@ -59,6 +65,24 @@ const Link = styled.a`
 const Wrapper = styled.article`
 `;
 
+const Variant = styled.span`
+  position: absolute;
+  right: -4px;
+  top: 12px;
+  color: white;
+  font-weight: bold;
+  padding: 7px 9px 9px 11px;
+  border-radius: 2px;
+
+  &.on-sale {
+    background-color: hsla(340, 65%, 47%, 1);
+  }
+
+  &.new-release {
+    background-color: hsla(240, 60%, 63%, 1);
+  }
+`;
+
 const ImageWrapper = styled.div`
   position: relative;
 `;
@@ -66,10 +90,14 @@ const ImageWrapper = styled.div`
 const Image = styled.img`
   width: 100%;
   min-width: 340px;
+  border-radius: 16px 16px 4px 4px;
 `;
 
 const Row = styled.div`
   font-size: 1rem;
+  display: flex;
+  justify-content: space-between;
+  position: relative;
 `;
 
 const Name = styled.h3`
@@ -77,7 +105,14 @@ const Name = styled.h3`
   color: ${COLORS.gray[900]};
 `;
 
-const Price = styled.span``;
+const Price = styled.span`
+  color: ${COLORS.gray[900]};
+
+  &.line {
+    text-decoration: line-through;
+    color: ${COLORS.gray[700]};
+  }
+`;
 
 const ColorInfo = styled.p`
   color: ${COLORS.gray[700]};
@@ -86,6 +121,9 @@ const ColorInfo = styled.p`
 const SalePrice = styled.span`
   font-weight: ${WEIGHTS.medium};
   color: ${COLORS.primary};
+  position: absolute;
+  right: 0px;
+  top: 22px;
 `;
 
 export default ShoeCard;
